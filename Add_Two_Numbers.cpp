@@ -54,22 +54,36 @@ public:
     {
 
         ListNode *res = NULL;
-        // int rest = 0;
-        while (l1 && l2)
+        int rest = 0;
+        while (l1 || l2)
         {
-            ListNode *node;
-            int totale = l1->val + l2->val;
+            int totale;
+            if (rest)
+            {
+                totale = (l1 ? l1->val : 0)+ (l2 ? l2->val : 0) + rest;
+                rest = 0;
+            }
+            else
+                totale = (l1 ? l1->val : 0)+ (l2 ? l2->val : 0);
+            if (totale > 9)
+            {
+                rest = totale / 10;
+                totale %= 10;
+            }
+            ListNode* node = new ListNode(totale);
 
-            node->val = totale;
-            node->next = NULL;
             res = addListTail(res,node);
-            l1 = l1->next;
-            l2 = l2->next;
+            if (l1)
+                l1 = l1->next;
+            if (l2)
+                l2 = l2->next;
         }
-        if (l1)
-            res = addListTail(res,l1);
-        if (l2)
-            res = addListTail(res,l2);
+        if (rest)
+        {
+            ListNode* node = new ListNode(rest);
+
+            res = addListTail(res,node);
+        }
         return res;
     }
 };
@@ -81,8 +95,8 @@ int main()
         Output: [7,0,8]
         Explanation: 342 + 465 = 807.
     */
-    ListNode l3(3, NULL), l2(4, &l3), l1(2, &l2);
-    ListNode l6(4, NULL), l5(2, &l6), l4(1, &l5);
+    ListNode l3(9, NULL), l2(9, &l3), l1(9, &l2);
+    ListNode l4(9, NULL);
 
     Solution s;
 
@@ -91,7 +105,9 @@ int main()
     while (res)
     {
         std::cout << res->val << " ";
+        ListNode* tmp = res;
         res = res->next;
+        delete tmp;
     }
     std::cout << std::endl;
     return 0;
